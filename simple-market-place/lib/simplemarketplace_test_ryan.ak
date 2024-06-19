@@ -1,14 +1,13 @@
-use aiken/transaction.{NoDatum, Output, ScriptContext, Spend, Transaction}
+use aiken/transaction.{NoDatum, Output, ScriptContext, Spend, Transaction,OutputReference,TransactionId}
 use aiken/transaction/value.{Value, ada_asset_name, ada_policy_id, from_asset}
-use assist/tests/fake_tx
-use simplemarketplace_utils.{check_if_paid}
+use simplemarketplace_utils_ryan.{check_if_paid}
 
 //************************** testing check_if_paid function *********************************************
 test check_if_paid_test_pass() {
   let val: Value = from_asset(ada_policy_id, ada_asset_name, 100)
   let test_out: Output =
     Output {
-      address: simplemarketplace_utils.create_address(#"acab", #""),
+      address: simplemarketplace_utils_ryan.create_address(#"acab", #""),
       value: val,
       datum: NoDatum,
       reference_script: None,
@@ -17,11 +16,14 @@ test check_if_paid_test_pass() {
     transaction.placeholder()
       |> fn(transaction) { Transaction { ..transaction, outputs: [test_out] } }
 
-  let test_ctx: ScriptContext =
-    ScriptContext {
-      transaction: test_trans,
-      purpose: Spend(fake_tx.test_out_ref()),
+  let test_out_ref: OutputReference =
+    OutputReference {
+      transaction_id: TransactionId { hash: #"aaaa" },
+      output_index: 1,
     }
+
+  let test_ctx: ScriptContext =
+    ScriptContext { transaction: test_trans, purpose: Spend(test_out_ref) }
 
   check_if_paid(test_ctx, 100)
 }
@@ -30,7 +32,7 @@ test check_if_paid_test_fail() fail {
   let val: Value = from_asset(ada_policy_id, ada_asset_name, 500)
   let test_out: Output =
     Output {
-      address: simplemarketplace_utils.create_address(#"acab", #""),
+      address: simplemarketplace_utils_ryan.create_address(#"acab", #""),
       value: val,
       datum: NoDatum,
       reference_script: None,
@@ -39,10 +41,17 @@ test check_if_paid_test_fail() fail {
     transaction.placeholder()
       |> fn(transaction) { Transaction { ..transaction, outputs: [test_out] } }
 
+ let test_out_ref: OutputReference =
+    OutputReference {
+      transaction_id: TransactionId { hash: #"aaaa" },
+      output_index: 1,
+    }
+
+
   let test_ctx: ScriptContext =
     ScriptContext {
       transaction: test_trans,
-      purpose: Spend(fake_tx.test_out_ref()),
+      purpose: Spend(test_out_ref),
     }
 
   check_if_paid(test_ctx, 100)

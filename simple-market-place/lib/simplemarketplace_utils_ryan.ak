@@ -5,7 +5,7 @@ use aiken/transaction.{
 }
 use aiken/transaction/credential.{Address}
 use aiken/transaction/value.{Value, ada_asset_name, ada_policy_id, from_asset}
-use simplemarketplace_types.{VerificationKeyHash}
+use simplemarketplace_types_ryan.{VerificationKeyHash}
 
 pub fn buy_function(ctx: ScriptContext, price_asset: Int) -> Bool {
   // using own input - own output to avoid "double satisfaction" problems

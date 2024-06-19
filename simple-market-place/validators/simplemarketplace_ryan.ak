@@ -1,7 +1,7 @@
 use aiken/transaction.{ScriptContext}
 use aiken/transaction/credential.{Address, VerificationKeyCredential}
-use simplemarketplace_types.{Buy, MarketRedeemer, SimpleSale, Withdraw}
-use simplemarketplace_utils.{buy_function, must_be_signed_by}
+use simplemarketplace_types_ryan.{Buy, MarketRedeemer, SimpleSale, Withdraw}
+use simplemarketplace_utils_ryan.{buy_function, must_be_signed_by}
 
 validator {
   fn mkmarket(
