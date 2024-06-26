@@ -3,7 +3,7 @@ use aiken/bytearray
 use aiken/hash.{blake2b_256}
 use aiken/list
 use aiken/transaction.{
-  DatumHash, Input, Output, OutputReference, ScriptContext, Spend, Transaction,
+  InlineDatum, Input, Output, OutputReference, ScriptContext, Spend, Transaction,
   find_script_outputs,
 }
 use aiken/transaction/credential.{Address}
@@ -69,7 +69,7 @@ fn datum_tagging_hash(output: Output, out_ref: OutputReference) -> Bool {
     out_ref
       |> serialise_data
       |> blake2b_256
-      |> DatumHash
+      |> InlineDatum
 
   output.datum == datum_tag
 }
