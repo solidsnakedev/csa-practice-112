@@ -60,7 +60,7 @@ pub fn own_input_own_output(
   )
 }
 
-fn datum_tagging_hash(output: Output, out_ref: OutputReference) -> Bool {
+pub fn datum_tagging_hash(output: Output, out_ref: OutputReference) -> Bool {
   //************* todo:  ask question !!!!!!
   //  //should I use the blake2b function from the builtin or stdlib???
   // seems to me I should use the stdlib because it returns a hash<blake2b_356,a> 
