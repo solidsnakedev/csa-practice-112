@@ -1,6 +1,5 @@
-use aiken/builtin.{serialise_data}
+use aiken/builtin
 use aiken/bytearray
-use aiken/hash.{blake2b_256}
 use aiken/list
 use aiken/transaction.{
   InlineDatum, Input, Output, OutputReference, ScriptContext, Spend, Transaction,
@@ -67,8 +66,8 @@ pub fn datum_tagging_hash(output: Output, out_ref: OutputReference) -> Bool {
   // whereas the builtin just return bytearry.  the jpg-store example uses the one from the builtin
   let datum_tag =
     out_ref
-      |> serialise_data
-      |> blake2b_256
+      |> builtin.serialise_data
+      |> builtin.blake2b_256
       |> InlineDatum
 
   output.datum == datum_tag
