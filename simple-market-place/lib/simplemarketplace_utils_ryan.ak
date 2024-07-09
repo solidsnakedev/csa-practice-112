@@ -5,9 +5,7 @@ use aiken/transaction.{
   InlineDatum, Input, Output, OutputReference, ScriptContext, Spend, Transaction,
 }
 use aiken/transaction/credential.{Address}
-use aiken/transaction/value.{
-  AssetName, PolicyId, Value, ada_asset_name, ada_policy_id, from_asset,
-}
+use aiken/transaction/value.{Value, ada_asset_name, ada_policy_id, from_asset}
 use simplemarketplace_types_ryan.{VerificationKeyHash}
 
 pub fn buy_function(
@@ -115,40 +113,6 @@ pub fn create_address(
   }
 }
 
-/// Return the first occurrence of an output that contains at least some specific
-/// value. If nothing is found then error. This function
-/// does not search for an exact UTxO match.
-///
-/// ```aiken
-/// find.output_by_value(tx.outputs, just_token_value)
-/// ```
 pub fn output_by_value(outputs: List<Output>, value: Value) -> List<Output> {
   list.filter(outputs, fn(output) { output.value == value })
-}
-
-/// Prove that the target value is contained inside another value. Each token
-/// inside the target must exist inside the total value. The quantity of each
-/// token must be at least the target amount or greater.
-///
-/// ```aiken
-/// values.contains(total_value, target_value)
-/// ```
-pub fn contains(total: Value, target: Value) -> Bool {
-  let flat: List<(PolicyId, AssetName, Int)> = value.flatten(target)
-  do_contains(total, flat)
-}
-
-// Internal only
-fn do_contains(total: Value, flat: List<(PolicyId, AssetName, Int)>) -> Bool {
-  when flat is {
-    [(pid, tkn, amt), ..rest] ->
-      if value.quantity_of(total, pid, tkn) >= amt {
-        do_contains(total, rest)
-      } else {
-        // something is missing
-        False
-      }
-    // found all of them
-    [] -> True
-  }
 }
