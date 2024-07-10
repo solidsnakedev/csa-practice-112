@@ -2,7 +2,8 @@ use aiken/builtin
 use aiken/bytearray
 use aiken/list
 use aiken/transaction.{
-  InlineDatum, Input, Output, OutputReference, ScriptContext, Spend, Transaction,
+  Datum, InlineDatum, Input, Output, OutputReference, ScriptContext, Spend,
+  Transaction,
 }
 use aiken/transaction/credential.{Address}
 use aiken/transaction/value.{Value, ada_asset_name, ada_policy_id, from_asset}
@@ -14,14 +15,19 @@ pub fn buy_function(
   seller_addr: Address,
 ) -> Bool {
   let ScriptContext { transaction, purpose } = ctx
-  let Transaction { inputs, outputs, .. } = transaction
+  let Transaction { outputs, .. } = transaction
   expect Spend(out_ref) = purpose
+  let datum_tag =
+    out_ref
+      |> builtin.serialise_data
+      |> builtin.blake2b_256
+      |> InlineDatum
+
+  // [0,1,2,3,4] => 1 contract
+  // let input: Input = list.at(inputs, index)
+  // input.out_ref == out_ref
   // using own input - own output to avoid "double satisfaction" problems
-  own_input_own_output(inputs, outputs, out_ref) && check_if_paid(
-    outputs,
-    price_asset,
-    seller_addr,
-  )
+  check_if_paid(outputs, price_asset, seller_addr, datum_tag)
 }
 
 //looking to make sure the value from the transaction is in the list of outputs
@@ -29,34 +35,25 @@ pub fn check_if_paid(
   outputs: List<Output>,
   price_asset: Int,
   addr: Address,
+  datum_tag: Datum,
 ) -> Bool {
   //constructing value to look for in outputs
   let val: Value = from_asset(ada_policy_id, ada_asset_name, price_asset)
-  let filteredlist =
+  //fail
+  expect [_] =
     list.filter(
       outputs,
-      fn(output) { output.value == val && output.address == addr },
+      fn(output) {
+        output.value == val && output.address == addr && output.datum == datum_tag
+      },
     )
-  list.length(filteredlist) == 1
-}
-
-pub fn own_input_own_output(
-  inputs: List<Input>,
-  outputs: List<Output>,
-  out_ref: OutputReference,
-) -> Bool {
-  let input: Input = find_own_input(inputs, out_ref)
-  let outputs: List<Output> = output_by_value(outputs, input.output.value)
-  //find_own_outputs(outputs, out_ref)
-  list.any(
-    outputs,
-    fn(output) {
-      output.address == input.output.address && datum_tagging_hash(
-        output,
-        out_ref,
-      )
-    },
-  )
+  True
+  // let filteredlist =
+  //   list.filter(
+  //     outputs,
+  //     fn(output) { output.value == val && output.address == addr },
+  //   )
+  // list.length(filteredlist) == 1
 }
 
 pub fn datum_tagging_hash(output: Output, out_ref: OutputReference) -> Bool {
@@ -81,7 +78,7 @@ pub fn must_be_signed_by(
 }
 
 // Get input from the script.
-fn find_own_input(inputs: List<Input>, out_ref: OutputReference) -> Input {
+pub fn find_own_input(inputs: List<Input>, out_ref: OutputReference) -> Input {
   //expect and input from the out_ref.
   expect Some(input) =
     inputs

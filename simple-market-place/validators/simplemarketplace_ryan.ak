@@ -18,3 +18,15 @@ validator {
     }
   }
 }
+// validator {
+//   fn stake(action: Redeemer, ctx: ScriptContext) -> Bool {
+//     let ScriptContext { transaction, purpose } = ctx
+//     expect WithdrawFrom(stake_credential) = purpose
+//     // big_computation
+//     // wrap(wrap(wrap(wrap(wrap(true)))))
+//     when purpose is {
+//       WithdrawFrom -> big_computation
+//       Publish -> false
+//     }
+//   }
+// }
