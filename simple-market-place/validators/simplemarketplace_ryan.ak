@@ -13,7 +13,7 @@ validator {
       dat.sellerAddress.payment_credential
 
     when action is {
-      Buy -> buy_function(ctx, dat.priceOfAsset)
+      Buy -> buy_function(ctx, dat.priceOfAsset, dat.sellerAddress)
       Withdraw -> must_be_signed_by(ctx.transaction, seller_pkh)
     }
   }
