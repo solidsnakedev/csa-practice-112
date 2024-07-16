@@ -6,9 +6,20 @@ name = "aiken-lang/stdlib"
 version = "1.9.0"
 source = "github"
 
+[[requirements]]
+name = "aiken-lang/fuzz"
+version = "ec7b4e245f30de62e996152b77d3cb85654aba6a"
+source = "github"
+
 [[packages]]
 name = "aiken-lang/stdlib"
 version = "1.9.0"
+requirements = []
+source = "github"
+
+[[packages]]
+name = "aiken-lang/fuzz"
+version = "ec7b4e245f30de62e996152b77d3cb85654aba6a"
 requirements = []
 source = "github"
 
