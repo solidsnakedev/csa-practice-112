@@ -14,3 +14,8 @@ platform = "github"
 name = "aiken-lang/stdlib"
 version = "1.9.0"
 source = "github"
+
+[[dependencies]]
+name = "aiken-lang/fuzz"
+version = "ec7b4e245f30de62e996152b77d3cb85654aba6a"
+source = "github"
